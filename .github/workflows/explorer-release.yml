@@ -70,6 +70,8 @@ jobs:
         run: |
           cd nexus-explorer/src/frontend
           pnpm install
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version "^2"
       - name: Build .app and .dmg
         run: |
           cd nexus-explorer
@@ -95,7 +97,7 @@ jobs:
 
   build-macos-x86_64:
     needs: create_release
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - name: Setup pnpm
@@ -116,6 +118,8 @@ jobs:
         run: |
           cd nexus-explorer/src/frontend
           pnpm install
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version "^2"
       - name: Build .app and .dmg
         run: |
           cd nexus-explorer
