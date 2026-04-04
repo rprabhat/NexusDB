@@ -6,6 +6,7 @@ members = [
     "nexus-cli",
     "nql-tests",
     "metrics",
+    "nexus-explorer",
 ]
 resolver = "2"
 

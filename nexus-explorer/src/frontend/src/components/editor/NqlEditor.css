@@ -1,0 +1,43 @@
+.nql-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  gap: 16px;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editor-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.editor-container {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+.result-panel {
+  background: var(--bg-secondary);
+  padding: 16px;
+  border-radius: 8px;
+  overflow: auto;
+  max-height: 300px;
+}
+
+.result-panel.error {
+  border: 1px solid var(--danger);
+}
+
+.result-panel pre {
+  font-family: monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+}
