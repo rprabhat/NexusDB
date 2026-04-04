@@ -1,0 +1,45 @@
+name: E2E Test Pipeline
+
+on:
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'nexus-explorer/**'
+      - 'nexus-db/**'
+      - 'scripts/e2e-test.sh'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+  push:
+    branches: [ main ]
+    paths:
+      - 'nexus-explorer/**'
+      - 'nexus-db/**'
+      - 'scripts/e2e-test.sh'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+
+jobs:
+  e2e-tests:
+    name: E2E Test Suite
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Run E2E Test Suite
+        run: |
+          chmod +x scripts/e2e-test.sh
+          bash scripts/e2e-test.sh
