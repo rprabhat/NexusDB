@@ -18,37 +18,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  create_release:
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-      release_id: ${{ steps.create_release.outputs.id }}
-      tag_name: ${{ steps.tag.outputs.tag }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Determine tag
-        id: tag
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tag=${{ inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          fi
-      - name: Create GitHub Release
-        id: create_release
-        uses: zendesk/action-create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          release_name: NexusDB Explorer ${{ steps.tag.outputs.tag }}
-          draft: false
-          prerelease: false
-
   build-macos-aarch64:
-    needs: create_release
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -80,21 +50,12 @@ jobs:
         run: |
           APP_DIR="target/aarch64-apple-darwin/release/bundle/macos/NexusDB Explorer.app"
           zip -r -y "target/aarch64-apple-darwin/release/bundle/macos/NexusDB-Explorer-aarch64.app.zip" "$APP_DIR"
-      - name: Upload .app.zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: target/aarch64-apple-darwin/release/bundle/macos/NexusDB-Explorer-aarch64.app.zip
-          asset_name: NexusDB-Explorer-${{ needs.create_release.outputs.tag_name }}-aarch64.app.zip
-          asset_content_type: application/zip
-      - name: Upload .dmg
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: target/aarch64-apple-darwin/release/bundle/dmg/NexusDB Explorer_${{ needs.create_release.outputs.tag_name }}_aarch64.dmg
-          asset_name: NexusDB-Explorer-${{ needs.create_release.outputs.tag_name }}-aarch64.dmg
-          asset_content_type: application/x-apple-diskimage
+          files: |
+            target/aarch64-apple-darwin/release/bundle/macos/NexusDB-Explorer-aarch64.app.zip
+            target/aarch64-apple-darwin/release/bundle/dmg/NexusDB Explorer_*.dmg
+          draft: false
+          prerelease: false
+          generate_release_notes: true
