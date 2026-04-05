@@ -36,7 +36,7 @@ struct QResult {
     count: usize,
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub fn nql_execute(
     state: tauri::State<AppState>,
     db_name: String,
@@ -77,7 +77,7 @@ pub fn nql_execute(
 fn do_match(q: &str, nodes: &[Node], edges: &[Edge]) -> Result<QResult, String> {
     let label = pick_label(q);
     let matched: Vec<QNode> = nodes.iter()
-        .filter(|n| label.as_ref().map_or(true, |l| n.label.contains(l)))
+        .filter(|n| label.as_ref().map_or(true, |l| n.label.to_lowercase().contains(l)))
         .map(|n| QNode { id: n.id, label: n.label.clone() })
         .collect();
     let matched_edges: Vec<QEdge> = if q.contains(")-[") || q.contains("]->") {
@@ -85,7 +85,7 @@ fn do_match(q: &str, nodes: &[Node], edges: &[Edge]) -> Result<QResult, String> 
         edges.iter()
             .filter(|e| {
                 let nm = matched.iter().any(|n| n.id == e.from || n.id == e.to);
-                el.as_ref().map_or(nm, |x| e.label.contains(x) && nm)
+                el.as_ref().map_or(nm, |x| e.label.to_lowercase().contains(x) && nm)
             })
             .map(|e| QEdge { id: e.id, label: e.label.clone(), from: e.from, to: e.to })
             .collect()
@@ -111,16 +111,30 @@ fn do_count(q: &str, nodes: &[Node], edges: &[Edge]) -> Result<QResult, String> 
     let count = if q.contains("edge") || q.contains("relationship") {
         edges.len()
     } else {
-        nodes.iter().filter(|n| label.as_ref().map_or(true, |l| n.label.contains(l))).count()
+        nodes.iter().filter(|n| label.as_ref().map_or(true, |l| n.label.to_lowercase().contains(l))).count()
     };
     Ok(QResult { nodes: vec![], edges: vec![], count })
 }
 
 fn pick_label(q: &str) -> Option<String> {
-    let pos = q.find(':')?;
-    let rest = &q[pos + 1..];
-    let end = rest.find(|c: char| !c.is_alphanumeric() && c != '_').unwrap_or(rest.len());
-    if end > 0 { Some(rest[..end].to_string()) } else { None }
+    // Only match node labels like (n:Label), not edge labels [r:Label]
+    // Look for pattern (X:Label) where X is a single letter
+    for (i, _) in q.match_indices(':') {
+        // Check if this is a node label: look back for '('
+        let before = &q[..i];
+        if let Some(paren) = before.rfind('(') {
+            let between = &before[paren + 1..];
+            // Node pattern: single letter variable like (n:Label)
+            if between.len() <= 2 && between.chars().all(|c| c.is_alphabetic()) {
+                let after = &q[i + 1..];
+                let end = after.find(|c: char| !c.is_alphanumeric() && c != '_').unwrap_or(after.len());
+                if end > 0 {
+                    return Some(after[..end].to_string());
+                }
+            }
+        }
+    }
+    None
 }
 
 fn pick_edge_label(q: &str) -> Option<String> {

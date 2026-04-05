@@ -1,3 +1,4 @@
+export const logError = (msg: string) => invoke("log_error", { msg });
 import { invoke } from "@tauri-apps/api/core";
 import type { NodeDto, EdgeDto, SchemaInfo, NqlResult } from "../types";
 
@@ -18,7 +19,7 @@ export const nodeUpdate = (db_name: string, id: number, label: string) =>
 export const nodeDelete = (db_name: string, id: number) =>
   invoke<string>("node_delete", { db_name, id });
 export const nodeList = (db_name: string) =>
-  invoke<NodeDto[]>("node_list", { db_name });
+  invoke<NodeDto[]>("node_list", { dbName: db_name });
 
 // Edge commands
 export const edgeCreate = (db_name: string, id: number, label: string, from_node: number, to_node: number) =>
@@ -30,12 +31,12 @@ export const edgeUpdate = (db_name: string, id: number, label: string, from_node
 export const edgeDelete = (db_name: string, id: number) =>
   invoke<string>("edge_delete", { db_name, id });
 export const edgeList = (db_name: string) =>
-  invoke<EdgeDto[]>("edge_list", { db_name });
+  invoke<EdgeDto[]>("edge_list", { dbName: db_name });
 
 // Schema commands
 export const schemaGet = (db_name: string) =>
-  invoke<SchemaInfo>("schema_get", { db_name });
+  invoke<SchemaInfo>("schema_get", { dbName: db_name });
 
 // NQL commands
 export const nqlExecute = (db_name: string, query: string) =>
-  invoke<NqlResult>("nql_execute", { db_name, query });
+  invoke<NqlResult>("nql_execute", { dbName: db_name, query });

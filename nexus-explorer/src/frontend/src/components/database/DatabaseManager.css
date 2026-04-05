@@ -1,26 +1,32 @@
 .db-manager {
-  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
-.db-manager h3 {
-  font-size: 14px;
+.panel-title {
+  font-size: var(--text-xs);
   font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--text-secondary);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
 }
 
 .db-list {
-  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
 .db-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
-  border-radius: 6px;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  margin-bottom: 4px;
+  transition: background var(--transition-fast);
 }
 
 .db-item:hover {
@@ -28,45 +34,45 @@
 }
 
 .db-item.active {
-  background: var(--accent);
-  color: white;
+  background: rgba(99, 102, 241, 0.15);
 }
 
-.db-item span {
-  font-size: 13px;
+.db-icon {
+  font-size: var(--text-base);
 }
 
-.db-item button {
-  padding: 2px 6px;
-  font-size: 14px;
-  min-width: auto;
+.db-name {
+  flex: 1;
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .db-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: var(--space-sm);
   border-top: 1px solid var(--border);
-  padding-top: 12px;
-}
-
-.form-group {
-  margin-bottom: 12px;
 }
 
 .form-group label {
   display: block;
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-bottom: var(--space-xs);
 }
 
 .form-group input {
   width: 100%;
 }
 
-.form-actions {
+.db-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
-.form-actions button {
+.db-actions button {
   flex: 1;
 }

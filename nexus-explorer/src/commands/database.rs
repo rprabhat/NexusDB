@@ -55,7 +55,15 @@ pub fn db_close(state: tauri::State<AppState>, name: String) -> Result<String, S
 #[tauri::command]
 pub fn db_list(state: tauri::State<AppState>) -> Result<Vec<String>, String> {
     let dbs = state.databases.lock().map_err(|e| e.to_string())?;
-    Ok(dbs.keys().cloned().collect())
+    let keys: Vec<String> = dbs.keys().cloned().collect();
+    let msg = format!("[DB_LIST] Returning {} databases: {:?}
+", keys.len(), keys);
+    eprint!("{}", msg);
+    std::fs::write("/tmp/nexus-explorer.log", format!("{}
+[DB_LIST] Returning {} databases: {:?}
+", 
+        std::fs::read_to_string("/tmp/nexus-explorer.log").unwrap_or_default(), keys.len(), keys)).ok();
+    Ok(keys)
 }
 
 #[tauri::command]
@@ -76,39 +84,38 @@ pub fn db_stats(state: tauri::State<AppState>, name: String) -> Result<DbStats, 
 pub fn db_create_demo_internal(state: &AppState) -> Result<(), String> {
     use nexus_db::embedded::database::Database;
 
-    let demo_path = dirs::home_dir()
+    let nexus_path = dirs::home_dir()
         .ok_or("Could not determine home directory")?
-        .join(".nexus")
-        .join("demo");
+        .join(".nexus");
 
-    if demo_path.exists() {
-        let dbs = state.databases.lock().map_err(|e| e.to_string())?;
-        if dbs.contains_key("demo") {
-            return Ok(());
-        }
-        drop(dbs);
-
-        let db = Database::open(&demo_path).map_err(|e| e.to_string())?;
-        let mut dbs = state.databases.lock().map_err(|e| e.to_string())?;
-        dbs.insert("demo".to_string(), Arc::new(db));
-        return Ok(());
+    // Demo 1: Health Patterns
+    let health_path = nexus_path.join("health-patterns");
+    if !health_path.exists() {
+        std::fs::create_dir_all(&health_path).map_err(|e| e.to_string())?;
     }
-
-    let db = Database::open(&demo_path).map_err(|e| e.to_string())?;
-    populate_demo_data(&db)?;
-
+    let health_db = Database::open(&health_path).map_err(|e| e.to_string())?;
+    populate_health_patterns(&health_db)?;
     let mut dbs = state.databases.lock().map_err(|e| e.to_string())?;
-    dbs.insert("demo".to_string(), Arc::new(db));
+    dbs.insert("health-patterns".to_string(), Arc::new(health_db));
+
+    // Demo 2: Project Management
+    let project_path = nexus_path.join("project-management");
+    if !project_path.exists() {
+        std::fs::create_dir_all(&project_path).map_err(|e| e.to_string())?;
+    }
+    let project_db = Database::open(&project_path).map_err(|e| e.to_string())?;
+    populate_project_management(&project_db)?;
+    dbs.insert("project-management".to_string(), Arc::new(project_db));
 
     Ok(())
 }
 
 #[tauri::command]
 pub fn db_create_demo(state: tauri::State<AppState>) -> Result<String, String> {
-    db_create_demo_internal(&state).map(|_| "Demo database ready".to_string())
+    db_create_demo_internal(&state).map(|_| "Demo databases ready: health-patterns, project-management".to_string())
 }
 
-fn populate_demo_data(db: &nexus_db::embedded::database::Database) -> Result<(), String> {
+fn populate_health_patterns(db: &nexus_db::embedded::database::Database) -> Result<(), String> {
     db.put_node(Node {
         id: 1,
         label: "Person:Alex".to_string(),
@@ -280,3 +287,68 @@ fn populate_demo_data(db: &nexus_db::embedded::database::Database) -> Result<(),
 
     Ok(())
 }
+
+#[tauri::command]
+pub fn log_error(msg: String) {
+    eprintln!("[FRONTEND_ERROR] {}", msg);
+    let _ = std::fs::write("/tmp/nexus-explorer.log", format!("{}
+[FRONTEND_ERROR] {}
+", 
+        std::fs::read_to_string("/tmp/nexus-explorer.log").unwrap_or_default(), msg));
+}
+
+fn populate_project_management(db: &nexus_db::embedded::database::Database) -> Result<(), String> {
+    // Team Members
+    db.put_node(Node { id: 1, label: "Person:Alice".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node { id: 2, label: "Person:Bob".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node { id: 3, label: "Person:Carol".to_string() }).map_err(|e| e.to_string())?;
+
+    // Projects
+    db.put_node(Node { id: 10, label: "Project:WebsiteRedesign".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node { id: 11, label: "Project:MobileApp".to_string() }).map_err(|e| e.to_string())?;
+
+    // Tasks
+    db.put_node(Node { id: 20, label: "Task:DesignMockups".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node { id: 21, label: "Task:FrontendDev".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node { id: 22, label: "Task:BackendAPI".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node { id: 23, label: "Task:Testing".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node { id: 24, label: "Task:Deployment".to_string() }).map_err(|e| e.to_string())?;
+
+    // Tools
+    db.put_node(Node { id: 30, label: "Tool:Figma".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node { id: 31, label: "Tool:GitHub".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node { id: 32, label: "Tool:AWS".to_string() }).map_err(|e| e.to_string())?;
+
+    // Assignments: Person -> Project
+    db.put_edge(Edge { id: 100, label: "ASSIGNED_TO".to_string(), from: 1, to: 10 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 101, label: "ASSIGNED_TO".to_string(), from: 2, to: 10 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 102, label: "ASSIGNED_TO".to_string(), from: 3, to: 11 }).map_err(|e| e.to_string())?;
+
+    // Tasks belong to projects
+    db.put_edge(Edge { id: 110, label: "PART_OF".to_string(), from: 20, to: 10 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 111, label: "PART_OF".to_string(), from: 21, to: 10 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 112, label: "PART_OF".to_string(), from: 22, to: 11 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 113, label: "PART_OF".to_string(), from: 23, to: 11 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 114, label: "PART_OF".to_string(), from: 24, to: 11 }).map_err(|e| e.to_string())?;
+
+    // Task dependencies
+    db.put_edge(Edge { id: 120, label: "BLOCKS".to_string(), from: 20, to: 21 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 121, label: "BLOCKS".to_string(), from: 21, to: 23 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 122, label: "BLOCKS".to_string(), from: 22, to: 23 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 123, label: "BLOCKS".to_string(), from: 23, to: 24 }).map_err(|e| e.to_string())?;
+
+    // Tasks use tools
+    db.put_edge(Edge { id: 130, label: "USES".to_string(), from: 20, to: 30 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 131, label: "USES".to_string(), from: 21, to: 31 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 132, label: "USES".to_string(), from: 22, to: 31 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 133, label: "USES".to_string(), from: 24, to: 32 }).map_err(|e| e.to_string())?;
+
+    // Person owns tasks
+    db.put_edge(Edge { id: 140, label: "OWNS".to_string(), from: 1, to: 20 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 141, label: "OWNS".to_string(), from: 2, to: 21 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge { id: 142, label: "OWNS".to_string(), from: 3, to: 22 }).map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
+

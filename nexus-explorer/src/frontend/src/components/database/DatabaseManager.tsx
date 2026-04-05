@@ -1,10 +1,19 @@
-import { Component, createSignal, Show } from "solid-js";
+import { Component, createSignal, Show, For } from "solid-js";
 import { dbCreate, dbOpen, dbList, dbClose, nodeList, edgeList, schemaGet } from "../../lib/api";
 import { databases, setDatabases, activeDb, setActiveDb, setNodes, setEdges, setSchema } from "../../stores/app";
 import "./DatabaseManager.css";
 
+const dbDescriptions: Record<string, string> = {
+  "health-patterns": "Health & symptom tracking — explore how events trigger symptoms",
+  "project-management": "Project management — track team, tasks, dependencies, and tools",
+};
+
+const dbIcons: Record<string, string> = {
+  "health-patterns": "🏥",
+  "project-management": "📋",
+};
+
 const DatabaseManager: Component = () => {
-  const [_mode, _setMode] = createSignal<"create" | "open">("create");
   const [name, setName] = createSignal("");
   const [path, setPath] = createSignal("");
   const [isExpanded, setIsExpanded] = createSignal(true);
@@ -61,17 +70,23 @@ const DatabaseManager: Component = () => {
 
   return (
     <div class="db-manager">
-      <h3 onClick={() => setIsExpanded(!isExpanded())} style={{ cursor: "pointer" }}>
-        Databases {isExpanded() ? "▼" : "▶"}
+      <h3 class="panel-title" onClick={() => setIsExpanded(!isExpanded())} style={{ cursor: "pointer" }}>
+        Databases {isExpanded() ? "▾" : "▸"}
       </h3>
       <Show when={isExpanded()}>
         <div class="db-list">
-          {databases().map((db) => (
-            <div classList={{ "db-item": true, active: activeDb() === db }}>
-              <span onClick={() => handleSelect(db)}>{db}</span>
-              <button class="danger small" onClick={() => handleClose(db)}>×</button>
-            </div>
-          ))}
+          <For each={databases()}>
+            {(db) => (
+              <div
+                classList={{ "db-item": true, active: activeDb() === db }}
+                title={dbDescriptions[db] || `Database: ${db}`}
+              >
+                <span class="db-icon">{dbIcons[db] || "🗄️"}</span>
+                <span class="db-name" onClick={() => handleSelect(db)}>{db}</span>
+                <button class="danger small" onClick={() => handleClose(db)} title={`Close ${db}`}>×</button>
+              </div>
+            )}
+          </For>
         </div>
         <div class="db-form">
           <div class="form-group">
@@ -80,11 +95,11 @@ const DatabaseManager: Component = () => {
           </div>
           <div class="form-group">
             <label>Path</label>
-            <input type="text" value={path()} onInput={(e) => setPath(e.currentTarget.value)} placeholder="/path/to/db" />
+            <input type="text" value={path()} onInput={(e) => setPath(e.currentTarget.value)} placeholder="~/.nexus/my-db" />
           </div>
-          <div class="form-actions">
-            <button onClick={handleCreate}>Create</button>
-            <button onClick={handleOpen}>Open</button>
+          <div class="db-actions">
+            <button onClick={handleCreate} title="Create a new database">Create</button>
+            <button class="secondary" onClick={handleOpen} title="Open an existing database">Open</button>
           </div>
         </div>
       </Show>

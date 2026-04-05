@@ -10,4 +10,14 @@ export const [selectedEdge, setSelectedEdge] = createSignal<EdgeDto | null>(null
 export const [schema, setSchema] = createSignal<SchemaInfo | null>(null);
 export const [isLoading, setIsLoading] = createSignal(false);
 export const [error, setError] = createSignal<string | null>(null);
-export const [activeView, setActiveView] = createSignal<"graph" | "nodes" | "edges" | "schema" | "nql">("graph");
+export const [activeView, setActiveView] = createSignal<"home" | "graph" | "chat" | "report" | "nodes" | "edges" | "schema" | "nql">("home");
+
+// Chat state
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  data?: any;
+  timestamp: number;
+}
+export const [chatMessages, setChatMessages] = createSignal<ChatMessage[]>([]);
+export const [isChatLoading, setIsChatLoading] = createSignal(false);

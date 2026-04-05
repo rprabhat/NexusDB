@@ -30,6 +30,7 @@ fn main() {
             commands::db_list,
             commands::db_stats,
             commands::db_create_demo,
+            commands::log_error,
             commands::node_create,
             commands::node_get,
             commands::node_update,

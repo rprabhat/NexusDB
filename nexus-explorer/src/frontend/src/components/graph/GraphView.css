@@ -1,5 +1,115 @@
 .graph-container {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.graph-svg {
   width: 100%;
   height: 100%;
-  background: var(--bg-primary);
+  display: block;
+}
+
+.node-info-panel {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #f1f5f9;
+  z-index: 100;
+  min-width: 200px;
+}
+
+.node-info-panel h4 {
+  margin: 0 0 8px 0;
+  color: #3b82f6;
+}
+
+.node-info-panel p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.node-info-panel button {
+  margin-top: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.zoom-controls {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+  z-index: 100;
+}
+
+.zoom-controls button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e293b;
+  border: 1px solid #475569;
+}
+
+.node-info-panel {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #f1f5f9;
+  z-index: 100;
+  min-width: 200px;
+}
+
+.node-info-panel h4 {
+  margin: 0 0 8px 0;
+  color: #3b82f6;
+}
+
+.node-info-panel p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.node-info-panel button {
+  margin-top: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.zoom-controls {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+  z-index: 100;
+}
+
+.zoom-controls button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e293b;
+  border: 1px solid #475569;
 }

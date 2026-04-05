@@ -87,12 +87,25 @@ pub fn node_delete(
 
 #[tauri::command]
 pub fn node_list(state: tauri::State<AppState>, db_name: String) -> Result<Vec<NodeDto>, String> {
+    let log_msg = format!("[NODE_LIST] Called with db_name={}
+", db_name);
+    eprint!("{}", log_msg);
+    let _ = std::fs::write("/tmp/nexus-explorer.log", format!("{}
+{}", 
+        std::fs::read_to_string("/tmp/nexus-explorer.log").unwrap_or_default(), log_msg));
     let dbs = state.databases.lock().map_err(|e| e.to_string())?;
+    eprintln!("[NODE_LIST] Available DBs: {:?}", dbs.keys().collect::<Vec<_>>());
     let db = dbs
         .get(&db_name)
-        .ok_or_else(|| format!("Database '{}' not found", db_name))?;
+        .ok_or_else(|| format!("Database '{}' not found. Available: {:?}", db_name, dbs.keys().collect::<Vec<_>>()))?;
     let tx = db.read_transaction().map_err(|e| e.to_string())?;
     let nodes = tx.scan_nodes().map_err(|e| e.to_string())?;
+    let log_msg2 = format!("[NODE_LIST] db={} found {} nodes
+", db_name, nodes.len());
+    eprint!("{}", log_msg2);
+    let _ = std::fs::write("/tmp/nexus-explorer.log", format!("{}
+{}", 
+        std::fs::read_to_string("/tmp/nexus-explorer.log").unwrap_or_default(), log_msg2));
     Ok(nodes
         .into_iter()
         .map(|n| NodeDto {
