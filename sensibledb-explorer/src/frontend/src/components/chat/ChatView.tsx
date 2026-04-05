@@ -1,7 +1,7 @@
 import { Component, createSignal, createEffect, For, onMount, Show } from "solid-js";
 import { activeDb, nodes, edges, schema, setActiveView, setChatContext, setLastQueryResult } from "../../stores/app";
 import type { SchemaInfo } from "../../types";
-import { nqlExecute } from "../../lib/api";
+import { sensibleqlExecute } from "../../lib/api";
 import "./ChatView.css";
 
 interface Message {
@@ -9,7 +9,7 @@ interface Message {
   content: string;
   data?: any;
   timestamp: number;
-  nql?: string;
+  sensibleql?: string;
   queryType?: string;
   followUps?: string[];
   structuredData?: StructuredResponse;
@@ -60,29 +60,29 @@ function findTwoEntityTypes(input: string, schemaInfo: SchemaInfo | null): [stri
   return [found[0] || null, found[1] || null];
 }
 
-export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): { nql: string; queryType: string } {
+export function translateNLtoSensibleQL(input: string, schemaInfo: SchemaInfo | null): { sensibleql: string; queryType: string } {
   const lower = normalize(input);
 
   if (lower.match(/what data do i have|show me all items|list all|overview/)) {
-    return { nql: "MATCH (n) RETURN n", queryType: "overview" };
+    return { sensibleql: "MATCH (n) RETURN n", queryType: "overview" };
   }
 
   if (lower.match(/how many connections|how many edges|count edges|number of connections/)) {
-    return { nql: "COUNT edges", queryType: "count" };
+    return { sensibleql: "COUNT edges", queryType: "count" };
   }
 
   if (lower.match(/what types|what kinds|distinct types|all types|item types/)) {
-    return { nql: "MATCH (n) RETURN DISTINCT labels(n)", queryType: "types" };
+    return { sensibleql: "MATCH (n) RETURN DISTINCT labels(n)", queryType: "types" };
   }
 
   if (lower.match(/show me the most connected|most connected|top connected|most connections/)) {
-    return { nql: "MATCH (n)-[r]-(m) RETURN n, count(r) as connections ORDER BY connections DESC", queryType: "mostConnected" };
+    return { sensibleql: "MATCH (n)-[r]-(m) RETURN n, count(r) as connections ORDER BY connections DESC", queryType: "mostConnected" };
   }
 
   const twoTypes = findTwoEntityTypes(input, schemaInfo);
   if (twoTypes[0] && twoTypes[1]) {
     if (lower.match(/show|find|get|list/)) {
-      return { nql: `MATCH (n:${twoTypes[0]})--(m:${twoTypes[1]}) RETURN n, m`, queryType: "relationship" };
+      return { sensibleql: `MATCH (n:${twoTypes[0]})--(m:${twoTypes[1]}) RETURN n, m`, queryType: "relationship" };
     }
   }
 
@@ -90,36 +90,36 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
 
   if (lower.match(/what causes|what triggers|what leads to/)) {
     const symptom = entityType || "Symptom";
-    return { nql: `MATCH (n:${symptom})<-[r]-(m) RETURN n, r, m`, queryType: "causes" };
+    return { sensibleql: `MATCH (n:${symptom})<-[r]-(m) RETURN n, r, m`, queryType: "causes" };
   }
 
   if (lower.match(/how many.*are there|count.*how many|number of/)) {
     const type = entityType || "n";
-    const nql = entityType ? `MATCH (n:${entityType}) RETURN count(n)` : "COUNT nodes";
-    return { nql, queryType: "count" };
+    const sensibleql = entityType ? `MATCH (n:${entityType}) RETURN count(n)` : "COUNT nodes";
+    return { sensibleql, queryType: "count" };
   }
 
   if (lower.match(/show me all|list all|get all|find all/)) {
     if (entityType) {
-      return { nql: `MATCH (n:${entityType}) RETURN n`, queryType: "list" };
+      return { sensibleql: `MATCH (n:${entityType}) RETURN n`, queryType: "list" };
     }
-    return { nql: "MATCH (n) RETURN n", queryType: "list" };
+    return { sensibleql: "MATCH (n) RETURN n", queryType: "list" };
   }
 
   if (lower.match(/what.*connected to|connections for|related to|linked to/)) {
     if (entityType) {
-      return { nql: `MATCH (n:${entityType})-[r]-(m) RETURN n, r, m`, queryType: "connections" };
+      return { sensibleql: `MATCH (n:${entityType})-[r]-(m) RETURN n, r, m`, queryType: "connections" };
     }
-    return { nql: "MATCH (n)-[r]-(m) RETURN n, r, m", queryType: "connections" };
+    return { sensibleql: "MATCH (n)-[r]-(m) RETURN n, r, m", queryType: "connections" };
   }
 
   if (lower.match(/show me|show|find|get/)) {
     if (entityType) {
-      return { nql: `MATCH (n:${entityType}) RETURN n`, queryType: "list" };
+      return { sensibleql: `MATCH (n:${entityType}) RETURN n`, queryType: "list" };
     }
   }
 
-  return { nql: input, queryType: "raw" };
+  return { sensibleql: input, queryType: "raw" };
 }
 
 function generateStructuredResponse(queryType: string, result: any, schemaInfo: SchemaInfo | null): StructuredResponse | null {
@@ -222,7 +222,7 @@ const ChatView: Component = () => {
     if (!activeDb()) return;
     setIsLoading(true);
     try {
-      const result = await nqlExecute(activeDb()!, query);
+      const result = await sensibleqlExecute(activeDb()!, query);
       return result;
     } catch (e: any) {
       return { success: false, message: String(e), data: null };
@@ -240,9 +240,9 @@ const ChatView: Component = () => {
     setInput("");
 
     const schemaInfo = schema();
-    const { nql, queryType } = translateNLtoNQL(query, schemaInfo);
+    const { sensibleql, queryType } = translateNLtoSensibleQL(query, schemaInfo);
 
-    const result = await executeQuery(nql);
+    const result = await executeQuery(sensibleql);
 
     let response = "";
     let structuredData: StructuredResponse | null = null;
@@ -271,7 +271,7 @@ const ChatView: Component = () => {
       content: response,
       data: result?.data,
       timestamp: Date.now(),
-      nql,
+      sensibleql,
       queryType,
       followUps,
       structuredData: structuredData || undefined,
@@ -280,7 +280,7 @@ const ChatView: Component = () => {
 
     setChatContext({
       lastQuery: query,
-      lastNql: nql,
+      lastNql: sensibleql,
       lastResultType: queryType as any,
       lastEntityTypes: schemaInfo?.node_labels || [],
       lastItemCount: result?.data?.nodes?.length || 0,
@@ -288,7 +288,7 @@ const ChatView: Component = () => {
     });
 
     setLastQueryResult({
-      nql,
+      sensibleql,
       data: result?.data || null,
       nodes: result?.data?.nodes?.map((n: any) => n.id) || [],
       edges: result?.data?.edges?.map((e: any) => e.id) || [],
@@ -402,17 +402,17 @@ const ChatView: Component = () => {
                   </div>
                 </Show>
 
-                <Show when={msg.nql}>
-                  <div class="nql-explain-section">
+                <Show when={msg.sensibleql}>
+                  <div class="sensibleql-explain-section">
                     <button
-                      class="nql-toggle-btn"
+                      class="sensibleql-toggle-btn"
                       onClick={() => toggleNqlExpand(index())}
                     >
                       {expandedNql().has(index()) ? "▾" : "▸"} How did I get this?
                     </button>
                     <Show when={expandedNql().has(index())}>
-                      <div class="nql-code">
-                        <code>{msg.nql}</code>
+                      <div class="sensibleql-code">
+                        <code>{msg.sensibleql}</code>
                       </div>
                     </Show>
                   </div>

@@ -61,7 +61,7 @@ const HomeView: Component = () => {
 
   const handleQuestion = async (dbId: string, question: string) => {
     await loadDb(dbId);
-    setActiveView("nql");
+    setActiveView("sensibleql");
   };
 
   const handleWizardComplete = (dbName: string) => {

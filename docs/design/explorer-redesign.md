@@ -415,7 +415,7 @@ Step 4: Processing
 | Label/Type | Type | "What kind of item this is" |
 | Vector Embedding | Similarity | "Items that are alike are grouped together" |
 | Graph Traversal | Follow connections | "Starting from one item, see what it connects to" |
-| NQL Query | Ask a question | "A way to ask your data questions" |
+| SensibleQL Query | Ask a question | "A way to ask your data questions" |
 | Schema | Structure | "The blueprint of how your data is organized" |
 
 ### 6.2 Contextual Tooltips
@@ -539,7 +539,7 @@ Every technical term gets a `?` icon that shows:
 ### Phase 1: Foundation (Week 1)
 - [ ] Design system tokens (CSS variables) ✅ started
 - [ ] Consistent component styles (buttons, inputs, cards)
-- [ ] Fix NQL query execution (camelCase params) ✅ done
+- [ ] Fix SensibleQL query execution (camelCase params) ✅ done
 - [ ] Graph interaction (zoom, pan, drag, select) ✅ done
 
 ### Phase 2: Home & Onboarding (Week 2)
@@ -550,7 +550,7 @@ Every technical term gets a `?` icon that shows:
 
 ### Phase 3: Chat Interface (Week 3)
 - [ ] Chat view with conversation history
-- [ ] Natural language to NQL translation (local)
+- [ ] Natural language to SensibleQL translation (local)
 - [ ] Streaming response display
 - [ ] Follow-up question suggestions
 
@@ -585,4 +585,4 @@ Every technical term gets a `?` icon that shows:
 | Query success rate | > 90% | % of queries that return results vs errors |
 | User retention (7-day) | > 60% | Analytics: returning users / total users |
 | Support tickets | < 5/week | Track user-reported issues |
-| NQL usage vs Chat | < 30% NQL | Migration to natural language interface |
+| SensibleQL usage vs Chat | < 30% SensibleQL | Migration to natural language interface |

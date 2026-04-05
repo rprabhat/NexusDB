@@ -25,7 +25,7 @@ nexus init
 ### 3. Write Schema and Queries
 
 **schema.hx:**
-```nql
+```sensibleql
 N::User {
     INDEX name: String,
     email: String,
@@ -40,7 +40,7 @@ E::Follows {
 ```
 
 **queries.hx:**
-```nql
+```sensibleql
 QUERY createUser(name: String, email: String) =>
     user <- AddN<User>({name: name, email: email})
     RETURN user

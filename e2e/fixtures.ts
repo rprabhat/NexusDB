@@ -83,7 +83,7 @@ export async function injectTauriMock(page: Page) {
           return 'deleted';
         case 'schema_get':
           return mockData.schema;
-        case 'nql_execute': {
+        case 'sensibleql_execute': {
           const query = (args?.query || '').trim().toUpperCase();
           if (query.includes('COUNT') && query.includes('NODE')) {
             return { success: true, message: `Found ${mockData.nodes.length} nodes`, data: { nodes: mockData.nodes, edges: [] } };

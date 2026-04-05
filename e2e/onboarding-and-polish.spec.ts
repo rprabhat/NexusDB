@@ -71,15 +71,15 @@ test.describe('Design System', () => {
   });
 });
 
-test.describe('NQL Editor', () => {
+test.describe('SensibleQL Editor', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: 'NQL Editor' }).first().click();
+    await page.getByRole('button', { name: 'SensibleQL Editor' }).first().click();
     await page.waitForTimeout(500);
   });
 
-  test('renders NQL editor', async ({ page }) => {
-    await expect(page.locator('.nql-editor')).toBeVisible();
+  test('renders SensibleQL editor', async ({ page }) => {
+    await expect(page.locator('.sensibleql-editor')).toBeVisible();
   });
 
   test('displays sample queries', async ({ page }) => {

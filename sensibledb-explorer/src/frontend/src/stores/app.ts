@@ -10,7 +10,7 @@ export const [selectedEdge, setSelectedEdge] = createSignal<EdgeDto | null>(null
 export const [schema, setSchema] = createSignal<SchemaInfo | null>(null);
 export const [isLoading, setIsLoading] = createSignal(false);
 export const [error, setError] = createSignal<string | null>(null);
-export const [activeView, setActiveView] = createSignal<"home" | "graph" | "chat" | "report" | "nodes" | "edges" | "schema" | "nql">("home");
+export const [activeView, setActiveView] = createSignal<"home" | "graph" | "chat" | "report" | "nodes" | "edges" | "schema" | "sensibleql">("home");
 
 // Chat state
 export interface ChatMessage {
@@ -33,7 +33,7 @@ export interface ChatContext {
 export const [chatContext, setChatContext] = createSignal<ChatContext | null>(null);
 
 export interface QueryResult {
-  nql: string;
+  sensibleql: string;
   data: any | null;
   nodes: number[];
   edges: number[];

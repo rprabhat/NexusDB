@@ -2,7 +2,7 @@
 
 ## Create
 
-```nql
+```sensibleql
 QUERY createUser(name: String, email: String) =>
     user <- AddN<User>({name: name, email: email})
     RETURN user
@@ -14,7 +14,7 @@ QUERY followUser(from_id: ID, to_id: ID, since: Date) =>
 
 ## Read
 
-```nql
+```sensibleql
 QUERY getUser(name: String) =>
     user <- N<User>({name: name})
     RETURN user
@@ -22,7 +22,7 @@ QUERY getUser(name: String) =>
 
 ## Update
 
-```nql
+```sensibleql
 QUERY updateUserEmail(user_id: ID, email: String) =>
     updated <- N<User>(user_id)::Update({email: email})
     RETURN updated
@@ -30,7 +30,7 @@ QUERY updateUserEmail(user_id: ID, email: String) =>
 
 ## Delete
 
-```nql
+```sensibleql
 QUERY deleteUser(user_id: ID) =>
     N<User>(user_id)::Drop
     RETURN "Deleted"

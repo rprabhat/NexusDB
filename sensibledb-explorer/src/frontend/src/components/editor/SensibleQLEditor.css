@@ -1,4 +1,4 @@
-.nql-editor {
+.sensibleql-editor {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -84,12 +84,12 @@
 }
 
 .result-header .success {
-  color: #22c55e;
+  color: var(--accent)22c55e;
   font-weight: 500;
 }
 
 .result-header .error {
-  color: #ef4444;
+  color: var(--accent)ef4444;
   font-weight: 500;
 }
 
@@ -135,11 +135,11 @@
 }
 
 .result-header .success {
-  color: #22c55e;
+  color: var(--accent)22c55e;
   font-weight: 500;
 }
 
 .result-header .error {
-  color: #ef4444;
+  color: var(--accent)ef4444;
   font-weight: 500;
 }

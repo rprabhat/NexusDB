@@ -701,7 +701,7 @@ QUERY DropSummaryEmbeddingEdge(summary_id: ID) =>
     RETURN "Removed summary embedding edge"
 
 // Delete all summaries for a document - maps to Python DeleteDocumentSummaries
-// Note: This returns summaries for client to drop individually since NexusQL
+// Note: This returns summaries for client to drop individually since SensibleQL
 // doesn't support DELETE WHERE in a single query
 QUERY DeleteDocumentSummaries(document_id: String) =>
     summaries <- N<Summary>::WHERE(_::{document_id}::EQ(document_id))

@@ -1,6 +1,6 @@
 import { Component, createEffect, createSignal, onMount, onCleanup, For, Show } from "solid-js";
 import { nodes, edges, activeDb, schema, setSelectedNode, selectedNode, setActiveView, setChatMessages } from "../../stores/app";
-import { nqlExecute } from "../../lib/api";
+import { sensibleqlExecute } from "../../lib/api";
 import type { NodeDto, EdgeDto } from "../../types";
 import InspectorPanel from "./InspectorPanel";
 import "./GraphView.css";
@@ -88,7 +88,7 @@ const GraphView: Component = () => {
 
     let alpha = 1.0;
     const minAlpha = 0.001;
-    const decay = 0.97;
+    const decay = 0.965;
 
     const tick = () => {
       if (alpha < minAlpha) {
@@ -106,7 +106,7 @@ const GraphView: Component = () => {
           const dx = arr[j].x - arr[i].x;
           const dy = arr[j].y - arr[i].y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          const force = (5000 / (dist * dist)) * alpha;
+          const force = (8000 / (dist * dist)) * alpha;
           arr[i].x -= (dx / dist) * force;
           arr[i].y -= (dy / dist) * force;
           arr[j].x += (dx / dist) * force;
@@ -121,7 +121,7 @@ const GraphView: Component = () => {
           const dx = t.x - s.x;
           const dy = t.y - s.y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          const force = (dist - 120) * 0.01 * alpha;
+          const force = (dist - 220) * 0.01 * alpha;
           if (!(dragNode && s.id === dragNode.id)) {
             s.x += (dx / dist) * force;
             s.y += (dy / dist) * force;
@@ -135,8 +135,8 @@ const GraphView: Component = () => {
 
       arr.forEach(node => {
         if (dragNode && node.id === dragNode.id) return;
-        node.x += (cx - node.x) * 0.02 * alpha;
-        node.y += (cy - node.y) * 0.02 * alpha;
+        node.x += (cx - node.x) * 0.008 * alpha;
+        node.y += (cy - node.y) * 0.008 * alpha;
       });
 
       setGraphNodes(Array.from(nodeMap.values()));
@@ -179,7 +179,7 @@ const GraphView: Component = () => {
         typeIndex.set(type, typeCounter++);
       }
       const angle = (2 * Math.PI * n.indexOf(node)) / n.length;
-      const r = Math.min(width, height) * 0.3;
+      const r = Math.min(width, height) * 0.38;
       nodeMap.set(node.id, {
         id: node.id,
         label: node.label,
@@ -273,7 +273,7 @@ const GraphView: Component = () => {
 
     setQueryLoading(true);
     try {
-      const result = await nqlExecute(activeDb()!, query);
+      const result = await sensibleqlExecute(activeDb()!, query);
       if (result.success) {
         setChatMessages([
           { role: "user", content: query, timestamp: Date.now() },
@@ -323,7 +323,7 @@ const GraphView: Component = () => {
               </feMerge>
             </filter>
             <filter id="node-shadow" x="-10%" y="-10%" width="120%" height="130%">
-              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.5" />
+              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.15" />
             </filter>
           </defs>
 
@@ -335,7 +335,7 @@ const GraphView: Component = () => {
             const isHovered = hoveredEdge() === edge.id;
             const isSelected = selected() && (selected()!.id === edge.from || selected()!.id === edge.to);
             const strokeWidth = isHovered || isSelected ? 3 : 2;
-            const strokeColor = isSelected ? "#3b82f6" : isHovered ? "#60a5fa" : "#475569";
+            const strokeColor = isSelected ? "#6366f1" : isHovered ? "#818cf8" : "#94a3b8";
 
             return (
               <g
@@ -388,9 +388,9 @@ const GraphView: Component = () => {
                   <div
                     class="node-card"
                     style={{
-                      "border-color": isSelected ? node.color : isHovered ? "rgba(255,255,255,0.3)" : "var(--border)",
+                      "border-color": isSelected ? node.color : isHovered ? "rgba(99,102,241,0.3)" : "var(--border)",
                       "box-shadow": isDragging
-                        ? "0 8px 24px rgba(0,0,0,0.6)"
+                        ? "0 8px 24px rgba(0,0,0,0.15)"
                         : isHovered
                         ? `0 0 12px ${node.color}40`
                         : "var(--shadow-sm)",
@@ -420,7 +420,7 @@ const GraphView: Component = () => {
           })}
 
           {graphNodes().length === 0 && (
-            <text x="400" y="300" fill="#94a3b8" font-size="16" text-anchor="middle">No data to display</text>
+            <text x="400" y="300" fill="var(--text-muted)" font-size="16" text-anchor="middle">No data to display</text>
           )}
         </g>
       </svg>

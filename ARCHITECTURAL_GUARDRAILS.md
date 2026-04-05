@@ -38,7 +38,7 @@ The project is organized as a Cargo workspace with the following crates:
 | `sensibledb-cli` | `sensibledb-cli/` | CLI tool for project management and query deployment |
 | `sensibledb-explorer` | `sensibledb-explorer/` | Web-based data explorer UI |
 | `metrics` | `metrics/` | Observability and metrics collection |
-| `nql-tests` | `nql-tests/` | SensibleQL query language test suite |
+| `sensibleql-tests` | `sensibleql-tests/` | SensibleQL query language test suite |
 
 ---
 
@@ -118,7 +118,7 @@ The project is organized as a Cargo workspace with the following crates:
 ## 8. Testing Guardrails
 
 - **Unit tests**: Co-located with source in each crate
-- **Query tests**: `nql-tests/` crate for SensibleQL validation
+- **Query tests**: `sensibleql-tests/` crate for SensibleQL validation
 - **E2E tests**: Playwright-based in `e2e/` directory
 - **Metrics**: Collected via `metrics/` crate
 

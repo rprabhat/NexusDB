@@ -2,7 +2,7 @@
 
 ## Node Schema
 
-```nql
+```sensibleql
 N::User {
     INDEX name: String,
     email: String,
@@ -13,7 +13,7 @@ N::User {
 
 ## Edge Schema
 
-```nql
+```sensibleql
 E::Follows {
     From: User,
     To: User,

@@ -59,12 +59,12 @@ test.describe('Chat Interface', () => {
     await expect(page.locator('.follow-up-chips')).toBeVisible();
   });
 
-  test('"How did I get this?" expandable shows NQL query', async ({ page }) => {
+  test('"How did I get this?" expandable shows SensibleQL query', async ({ page }) => {
     const input = page.locator('.chat-input-area input');
     await input.fill('What data do I have?');
     await page.getByRole('button', { name: 'Send' }).click();
     await expect(page.locator('.chat-message.assistant').last()).toBeVisible({ timeout: 5000 });
-    const nqlToggle = page.locator('.nql-toggle-btn');
-    await expect(nqlToggle).toBeVisible();
+    const sensibleqlToggle = page.locator('.sensibleql-toggle-btn');
+    await expect(sensibleqlToggle).toBeVisible();
   });
 });

@@ -2,7 +2,7 @@
 
 ## Vector Similarity Search
 
-```nql
+```sensibleql
 QUERY searchSimilar(query_vec: [F32], limit: U32) =>
     results <- SearchV<Article>({vector: query_vec, limit: limit})
     RETURN results
@@ -10,7 +10,7 @@ QUERY searchSimilar(query_vec: [F32], limit: U32) =>
 
 ## Automatic Embeddings
 
-```nql
+```sensibleql
 QUERY searchArticles(query: String) =>
     results <- SearchV<Article>({vector: Embed(query), limit: 10})
     RETURN results
@@ -18,7 +18,7 @@ QUERY searchArticles(query: String) =>
 
 ## Keyword Search (BM25)
 
-```nql
+```sensibleql
 QUERY keywordSearch(query: String) =>
     results <- SearchBM25<Article>({fields: ["title", "content"], query: query})
     RETURN results
@@ -26,7 +26,7 @@ QUERY keywordSearch(query: String) =>
 
 ## Hybrid Search with RRF
 
-```nql
+```sensibleql
 QUERY hybridSearch(query: String) =>
     vector_results <- SearchV<Article>({vector: Embed(query), limit: 20})
     keyword_results <- SearchBM25<Article>({fields: ["title"], query: query})

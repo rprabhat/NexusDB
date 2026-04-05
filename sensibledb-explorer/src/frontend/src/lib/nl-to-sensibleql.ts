@@ -1,7 +1,7 @@
 import type { SchemaInfo } from "../types";
 
 interface NLMatch {
-  nql: string;
+  sensibleql: string;
   resultType: "overview" | "items" | "connections" | "count" | "relationships" | "most_connected";
   entityTypes?: string[];
 }
@@ -36,19 +36,19 @@ function findTwoEntityTypes(input: string, schemaInfo: SchemaInfo | null): [stri
   return [found[0], found[1]];
 }
 
-export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): NLMatch {
+export function translateNLtoSensibleQL(input: string, schemaInfo: SchemaInfo | null): NLMatch {
   const normalized = normalize(input);
 
   if (normalized === "what data do i have" || normalized === "show me all items" || normalized === "show me everything") {
-    return { nql: "MATCH (n) RETURN n", resultType: "overview" };
+    return { sensibleql: "MATCH (n) RETURN n", resultType: "overview" };
   }
 
   if (normalized === "how many connections are there" || normalized === "count connections" || normalized === "how many connections") {
-    return { nql: "COUNT edges", resultType: "count" };
+    return { sensibleql: "COUNT edges", resultType: "count" };
   }
 
   if (normalized === "what types of items exist" || normalized === "what types are there" || normalized === "show me all types") {
-    return { nql: "MATCH (n) RETURN DISTINCT labels(n)", resultType: "overview" };
+    return { sensibleql: "MATCH (n) RETURN DISTINCT labels(n)", resultType: "overview" };
   }
 
   const countMatch = normalized.match(/^(?:how many|count)\s+(.+?)(?:\s+are there|\s+do (?:i|we)\s+have)?$/);
@@ -56,7 +56,7 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
     const entityType = findEntityType(countMatch[1], schemaInfo);
     if (entityType) {
       return {
-        nql: `MATCH (n:${entityType}) RETURN count(n)`,
+        sensibleql: `MATCH (n:${entityType}) RETURN count(n)`,
         resultType: "count",
         entityTypes: [entityType],
       };
@@ -68,7 +68,7 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
     const entityType = findEntityType(showAllMatch[1], schemaInfo);
     if (entityType) {
       return {
-        nql: `MATCH (n:${entityType}) RETURN n`,
+        sensibleql: `MATCH (n:${entityType}) RETURN n`,
         resultType: "items",
         entityTypes: [entityType],
       };
@@ -80,7 +80,7 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
     const entityType = findEntityType(showMatch[1], schemaInfo);
     if (entityType) {
       return {
-        nql: `MATCH (n:${entityType}) RETURN n`,
+        sensibleql: `MATCH (n:${entityType}) RETURN n`,
         resultType: "items",
         entityTypes: [entityType],
       };
@@ -92,7 +92,7 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
     const entityType = findEntityType(connectedToMatch[1], schemaInfo);
     if (entityType) {
       return {
-        nql: `MATCH (n:${entityType})-[r]-(m) RETURN n, r, m`,
+        sensibleql: `MATCH (n:${entityType})-[r]-(m) RETURN n, r, m`,
         resultType: "connections",
         entityTypes: [entityType],
       };
@@ -104,7 +104,7 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
     const [type1, type2] = findTwoEntityTypes(`${showConnectedMatch[1]} ${showConnectedMatch[2]}`, schemaInfo);
     if (type1 && type2) {
       return {
-        nql: `MATCH (n:${type1})--(m:${type2}) RETURN n, m`,
+        sensibleql: `MATCH (n:${type1})--(m:${type2}) RETURN n, m`,
         resultType: "relationships",
         entityTypes: [type1, type2],
       };
@@ -112,7 +112,7 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
     const type1only = findEntityType(showConnectedMatch[1], schemaInfo);
     if (type1only) {
       return {
-        nql: `MATCH (n:${type1only})-[r]-(m) RETURN n, r, m`,
+        sensibleql: `MATCH (n:${type1only})-[r]-(m) RETURN n, r, m`,
         resultType: "connections",
         entityTypes: [type1only],
       };
@@ -124,7 +124,7 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
     const entityType = findEntityType(causesMatch[1], schemaInfo);
     if (entityType) {
       return {
-        nql: `MATCH (n:${entityType})<-[r]-(m) RETURN n, r, m`,
+        sensibleql: `MATCH (n:${entityType})<-[r]-(m) RETURN n, r, m`,
         resultType: "relationships",
         entityTypes: [entityType],
       };
@@ -134,7 +134,7 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
   const mostConnectedMatch = normalized.match(/^(?:show\s+me\s+)?(?:the\s+)?most\s+connected\s+(?:items?|nodes?|things?)(.*)$/);
   if (mostConnectedMatch || normalized.includes("most connected")) {
     return {
-      nql: `MATCH (n)-[r]-(m) RETURN n, count(r) as connections ORDER BY connections DESC`,
+      sensibleql: `MATCH (n)-[r]-(m) RETURN n, count(r) as connections ORDER BY connections DESC`,
       resultType: "most_connected",
     };
   }
@@ -144,7 +144,7 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
     const entityType = findEntityType(detailsMatch[1], schemaInfo);
     if (entityType) {
       return {
-        nql: `MATCH (n:${entityType}) RETURN n`,
+        sensibleql: `MATCH (n:${entityType}) RETURN n`,
         resultType: "items",
         entityTypes: [entityType],
       };
@@ -156,14 +156,14 @@ export function translateNLtoNQL(input: string, schemaInfo: SchemaInfo | null): 
     const entityType = findEntityType(listMatch[1], schemaInfo);
     if (entityType) {
       return {
-        nql: `MATCH (n:${entityType}) RETURN n`,
+        sensibleql: `MATCH (n:${entityType}) RETURN n`,
         resultType: "items",
         entityTypes: [entityType],
       };
     }
   }
 
-  return { nql: input, resultType: "items" };
+  return { sensibleql: input, resultType: "items" };
 }
 
 export function generateFollowUpSuggestions(context: {
@@ -230,7 +230,7 @@ export function generateFollowUpSuggestions(context: {
 export function generateAssistantResponse(
   query: string,
   result: any,
-  nql: string,
+  sensibleql: string,
   schemaInfo: SchemaInfo | null,
   resultType: string
 ): string {

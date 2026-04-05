@@ -35,10 +35,10 @@ export const tourSteps: TourStep[] = [
     action: () => setActiveView("report"),
   },
   {
-    title: "NQL Editor",
+    title: "SensibleQL Editor",
     description: "For advanced users — write precise queries using Nexus Query Language. Full control over your data exploration.",
-    targetSelector: '[data-tour-target="nql"]',
-    action: () => setActiveView("nql"),
+    targetSelector: '[data-tour-target="sensibleql"]',
+    action: () => setActiveView("sensibleql"),
   },
 ];
 

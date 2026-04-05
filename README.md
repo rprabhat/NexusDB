@@ -166,7 +166,7 @@ SensibleDB/
 ├── sensibledb-container/   # Docker container deployment
 ├── sensibledb-macros/      # Procedural macros for SensibleQL
 ├── metrics/                # Telemetry and metrics
-├── nql-tests/              # Query language test suite
+├── sensibleql-tests/              # Query language test suite
 ├── e2e/                    # Playwright E2E tests (65 tests)
 └── docs/                   # Documentation source
 ```

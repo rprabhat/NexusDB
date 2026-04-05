@@ -56,13 +56,25 @@ pub fn db_close(state: tauri::State<AppState>, name: String) -> Result<String, S
 pub fn db_list(state: tauri::State<AppState>) -> Result<Vec<String>, String> {
     let dbs = state.databases.lock().map_err(|e| e.to_string())?;
     let keys: Vec<String> = dbs.keys().cloned().collect();
-    let msg = format!("[DB_LIST] Returning {} databases: {:?}
-", keys.len(), keys);
+    let msg = format!(
+        "[DB_LIST] Returning {} databases: {:?}
+",
+        keys.len(),
+        keys
+    );
     eprint!("{}", msg);
-    std::fs::write("/tmp/sensibledb-explorer.log", format!("{}
+    std::fs::write(
+        "/tmp/sensibledb-explorer.log",
+        format!(
+            "{}
 [DB_LIST] Returning {} databases: {:?}
-", 
-        std::fs::read_to_string("/tmp/sensibledb-explorer.log").unwrap_or_default(), keys.len(), keys)).ok();
+",
+            std::fs::read_to_string("/tmp/sensibledb-explorer.log").unwrap_or_default(),
+            keys.len(),
+            keys
+        ),
+    )
+    .ok();
     Ok(keys)
 }
 
@@ -112,10 +124,13 @@ pub fn db_create_demo_internal(state: &AppState) -> Result<(), String> {
 
 #[tauri::command]
 pub fn db_create_demo(state: tauri::State<AppState>) -> Result<String, String> {
-    db_create_demo_internal(&state).map(|_| "Demo databases ready: health-patterns, project-management".to_string())
+    db_create_demo_internal(&state)
+        .map(|_| "Demo databases ready: health-patterns, project-management".to_string())
 }
 
-fn populate_health_patterns(db: &sensibledb_db::embedded::database::Database) -> Result<(), String> {
+fn populate_health_patterns(
+    db: &sensibledb_db::embedded::database::Database,
+) -> Result<(), String> {
     db.put_node(Node {
         id: 1,
         label: "Person:Alex".to_string(),
@@ -291,64 +306,236 @@ fn populate_health_patterns(db: &sensibledb_db::embedded::database::Database) ->
 #[tauri::command]
 pub fn log_error(msg: String) {
     eprintln!("[FRONTEND_ERROR] {}", msg);
-    let _ = std::fs::write("/tmp/sensibledb-explorer.log", format!("{}
+    let _ = std::fs::write(
+        "/tmp/sensibledb-explorer.log",
+        format!(
+            "{}
 [FRONTEND_ERROR] {}
-", 
-        std::fs::read_to_string("/tmp/sensibledb-explorer.log").unwrap_or_default(), msg));
+",
+            std::fs::read_to_string("/tmp/sensibledb-explorer.log").unwrap_or_default(),
+            msg
+        ),
+    );
 }
 
-fn populate_project_management(db: &sensibledb_db::embedded::database::Database) -> Result<(), String> {
+fn populate_project_management(
+    db: &sensibledb_db::embedded::database::Database,
+) -> Result<(), String> {
     // Team Members
-    db.put_node(Node { id: 1, label: "Person:Alice".to_string() }).map_err(|e| e.to_string())?;
-    db.put_node(Node { id: 2, label: "Person:Bob".to_string() }).map_err(|e| e.to_string())?;
-    db.put_node(Node { id: 3, label: "Person:Carol".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 1,
+        label: "Person:Alice".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 2,
+        label: "Person:Bob".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 3,
+        label: "Person:Carol".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
 
     // Projects
-    db.put_node(Node { id: 10, label: "Project:WebsiteRedesign".to_string() }).map_err(|e| e.to_string())?;
-    db.put_node(Node { id: 11, label: "Project:MobileApp".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 10,
+        label: "Project:WebsiteRedesign".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 11,
+        label: "Project:MobileApp".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
 
     // Tasks
-    db.put_node(Node { id: 20, label: "Task:DesignMockups".to_string() }).map_err(|e| e.to_string())?;
-    db.put_node(Node { id: 21, label: "Task:FrontendDev".to_string() }).map_err(|e| e.to_string())?;
-    db.put_node(Node { id: 22, label: "Task:BackendAPI".to_string() }).map_err(|e| e.to_string())?;
-    db.put_node(Node { id: 23, label: "Task:Testing".to_string() }).map_err(|e| e.to_string())?;
-    db.put_node(Node { id: 24, label: "Task:Deployment".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 20,
+        label: "Task:DesignMockups".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 21,
+        label: "Task:FrontendDev".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 22,
+        label: "Task:BackendAPI".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 23,
+        label: "Task:Testing".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 24,
+        label: "Task:Deployment".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
 
     // Tools
-    db.put_node(Node { id: 30, label: "Tool:Figma".to_string() }).map_err(|e| e.to_string())?;
-    db.put_node(Node { id: 31, label: "Tool:GitHub".to_string() }).map_err(|e| e.to_string())?;
-    db.put_node(Node { id: 32, label: "Tool:AWS".to_string() }).map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 30,
+        label: "Tool:Figma".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 31,
+        label: "Tool:GitHub".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_node(Node {
+        id: 32,
+        label: "Tool:AWS".to_string(),
+    })
+    .map_err(|e| e.to_string())?;
 
     // Assignments: Person -> Project
-    db.put_edge(Edge { id: 100, label: "ASSIGNED_TO".to_string(), from: 1, to: 10 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 101, label: "ASSIGNED_TO".to_string(), from: 2, to: 10 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 102, label: "ASSIGNED_TO".to_string(), from: 3, to: 11 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 100,
+        label: "ASSIGNED_TO".to_string(),
+        from: 1,
+        to: 10,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 101,
+        label: "ASSIGNED_TO".to_string(),
+        from: 2,
+        to: 10,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 102,
+        label: "ASSIGNED_TO".to_string(),
+        from: 3,
+        to: 11,
+    })
+    .map_err(|e| e.to_string())?;
 
     // Tasks belong to projects
-    db.put_edge(Edge { id: 110, label: "PART_OF".to_string(), from: 20, to: 10 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 111, label: "PART_OF".to_string(), from: 21, to: 10 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 112, label: "PART_OF".to_string(), from: 22, to: 11 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 113, label: "PART_OF".to_string(), from: 23, to: 11 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 114, label: "PART_OF".to_string(), from: 24, to: 11 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 110,
+        label: "PART_OF".to_string(),
+        from: 20,
+        to: 10,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 111,
+        label: "PART_OF".to_string(),
+        from: 21,
+        to: 10,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 112,
+        label: "PART_OF".to_string(),
+        from: 22,
+        to: 11,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 113,
+        label: "PART_OF".to_string(),
+        from: 23,
+        to: 11,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 114,
+        label: "PART_OF".to_string(),
+        from: 24,
+        to: 11,
+    })
+    .map_err(|e| e.to_string())?;
 
     // Task dependencies
-    db.put_edge(Edge { id: 120, label: "BLOCKS".to_string(), from: 20, to: 21 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 121, label: "BLOCKS".to_string(), from: 21, to: 23 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 122, label: "BLOCKS".to_string(), from: 22, to: 23 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 123, label: "BLOCKS".to_string(), from: 23, to: 24 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 120,
+        label: "BLOCKS".to_string(),
+        from: 20,
+        to: 21,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 121,
+        label: "BLOCKS".to_string(),
+        from: 21,
+        to: 23,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 122,
+        label: "BLOCKS".to_string(),
+        from: 22,
+        to: 23,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 123,
+        label: "BLOCKS".to_string(),
+        from: 23,
+        to: 24,
+    })
+    .map_err(|e| e.to_string())?;
 
     // Tasks use tools
-    db.put_edge(Edge { id: 130, label: "USES".to_string(), from: 20, to: 30 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 131, label: "USES".to_string(), from: 21, to: 31 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 132, label: "USES".to_string(), from: 22, to: 31 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 133, label: "USES".to_string(), from: 24, to: 32 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 130,
+        label: "USES".to_string(),
+        from: 20,
+        to: 30,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 131,
+        label: "USES".to_string(),
+        from: 21,
+        to: 31,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 132,
+        label: "USES".to_string(),
+        from: 22,
+        to: 31,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 133,
+        label: "USES".to_string(),
+        from: 24,
+        to: 32,
+    })
+    .map_err(|e| e.to_string())?;
 
     // Person owns tasks
-    db.put_edge(Edge { id: 140, label: "OWNS".to_string(), from: 1, to: 20 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 141, label: "OWNS".to_string(), from: 2, to: 21 }).map_err(|e| e.to_string())?;
-    db.put_edge(Edge { id: 142, label: "OWNS".to_string(), from: 3, to: 22 }).map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 140,
+        label: "OWNS".to_string(),
+        from: 1,
+        to: 20,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 141,
+        label: "OWNS".to_string(),
+        from: 2,
+        to: 21,
+    })
+    .map_err(|e| e.to_string())?;
+    db.put_edge(Edge {
+        id: 142,
+        label: "OWNS".to_string(),
+        from: 3,
+        to: 22,
+    })
+    .map_err(|e| e.to_string())?;
 
     Ok(())
 }
-
-

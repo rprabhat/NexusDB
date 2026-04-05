@@ -300,7 +300,7 @@ impl Query {
                     }
                 } else if struct_def.is_collection {
                     // Collection - generate mapping code
-                    // Use NQL closure param name if available, otherwise fall back to singular form
+                    // Use SensibleQL closure param name if available, otherwise fall back to singular form
                     let singular_var = struct_def
                         .closure_param_name
                         .as_deref()
@@ -1310,7 +1310,7 @@ impl Query {
                     )?;
                 } else if struct_def.is_collection {
                     // Collection - generate mapping code
-                    // Use NQL closure param name if available, otherwise fall back to singular form
+                    // Use SensibleQL closure param name if available, otherwise fall back to singular form
                     let singular_var = struct_def
                         .closure_param_name
                         .as_deref()

@@ -126,7 +126,7 @@ The heart of SensibleDB containing all database functionality.
   - `analyzer/` - Type checking, validation, and diagnostics
   - `generator/` - Rust code generation from parsed queries
 
-- **`grammar.pest`** - 295-line Pest grammar defining NQL syntax
+- **`grammar.pest`** - 295-line Pest grammar defining SensibleQL syntax
 
 - **`protocol/`** - Wire protocol and data types
 
@@ -232,8 +232,8 @@ sensibledb-cli/
 #### `/sensibledb-macros/` - Procedural Macros
 Procedural macros for SensibleDB including route registration and code generation utilities.
 
-#### `/nql-tests/` - NQL Test Suite
-Test files for the Nexus Query Language (NQL).
+#### `/sensibleql-tests/` - SensibleQL Test Suite
+Test files for the Nexus Query Language (SensibleQL).
 
 #### `/metrics/` - Performance Metrics
 Performance benchmarking and metrics collection.
@@ -284,7 +284,7 @@ Run Clippy to check code quality:
 
 The `clippy_check.sh` script at the repository root runs clippy with project-specific rules:
 - Treats warnings as errors
-- Excludes `nql-tests` crate
+- Excludes `sensibleql-tests` crate
 - Can run in dashboard mode with additional features
 
 ### Testing
@@ -308,8 +308,8 @@ SensibleDB has a comprehensive test suite organized across multiple levels:
   - `init_tests.rs` - Project initialization
   - `project_tests.rs` - Project management
 
-**NQL End-to-End Tests**
-- `/nql-tests/tests/` - 54+ test directories covering:
+**SensibleQL End-to-End Tests**
+- `/sensibleql-tests/tests/` - 54+ test directories covering:
   - Graph operations (add_n, add_e, traversals)
   - Vector search (search_v_with_embed)
   - Text search (search_bm25)
@@ -334,8 +334,8 @@ cargo test --workspace
 cargo test -p sensibledb-db
 cargo test -p sensibledb-cli
 
-# Run NQL tests
-cd nql-tests
+# Run SensibleQL tests
+cd sensibleql-tests
 ./test.sh
 
 # Run benchmarks

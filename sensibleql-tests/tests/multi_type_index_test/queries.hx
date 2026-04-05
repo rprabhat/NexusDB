@@ -57,7 +57,7 @@ QUERY testLiterals() =>
 
 // Test multiple conditions
 QUERY testMultipleConditions(name: String, age: U32, active: Boolean) =>
-    // Note: Current NQL doesn't support multiple field filters in a single N<> call
+    // Note: Current SensibleQL doesn't support multiple field filters in a single N<> call
     // This would need to be implemented as separate lookups with intersection
     nodes_by_name <- N<TestNode>({str_field: name})
     nodes_by_age <- N<TestNode>({u32_field: age})

@@ -5,7 +5,7 @@ import GraphView from "./components/graph/GraphView";
 import NodeList from "./components/entities/NodeList";
 import EdgeList from "./components/entities/EdgeList";
 import SchemaBrowser from "./components/sidebar/SchemaBrowser";
-import NqlEditor from "./components/editor/NqlEditor";
+import SensibleQLEditor from "./components/editor/SensibleQLEditor";
 import HomeView from "./components/home/HomeView";
 import ChatView from "./components/chat/ChatView";
 import ReportView from "./components/report/ReportView";
@@ -61,7 +61,7 @@ const App: Component = () => {
       else if (e.key === "5") setActiveView("nodes");
       else if (e.key === "6") setActiveView("edges");
       else if (e.key === "7") setActiveView("schema");
-      else if (e.key === "8") setActiveView("nql");
+      else if (e.key === "8") setActiveView("sensibleql");
       else if (e.key === "Escape") {
         if (selectedNode()) setSelectedNode(null);
         else setActiveView("home");
@@ -135,8 +135,8 @@ const App: Component = () => {
           <Show when={activeView() === "schema"}>
             <ErrorBoundaryComponent><SchemaBrowser /></ErrorBoundaryComponent>
           </Show>
-          <Show when={activeView() === "nql"}>
-            <ErrorBoundaryComponent><NqlEditor /></ErrorBoundaryComponent>
+          <Show when={activeView() === "sensibleql"}>
+            <ErrorBoundaryComponent><SensibleQLEditor /></ErrorBoundaryComponent>
           </Show>
         </main>
         <aside class="right-panel">

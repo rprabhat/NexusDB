@@ -1,4 +1,4 @@
-// Test NexusQL queries for path-finding functions
+// Test SensibleQL queries for path-finding functions
 
 // Test BFS (shortest by hop count)
 QUERY shortestPathBFS(from: ID, to: ID) =>

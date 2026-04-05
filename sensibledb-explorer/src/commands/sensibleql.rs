@@ -3,13 +3,13 @@ use sensibledb_db::embedded::transaction::{Edge, Node, ReadTransaction};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
-pub struct NqlRequest {
+pub struct SensibleqlRequest {
     pub db_name: String,
     pub query: String,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct NqlResult {
+pub struct SensibleqlResult {
     pub success: bool,
     pub message: String,
     pub data: Option<serde_json::Value>,
@@ -37,11 +37,11 @@ struct QResult {
 }
 
 #[tauri::command(rename_all = "camelCase")]
-pub fn nql_execute(
+pub fn sensibleql_execute(
     state: tauri::State<AppState>,
     db_name: String,
     query: String,
-) -> Result<NqlResult, String> {
+) -> Result<SensibleqlResult, String> {
     let dbs = state.databases.lock().map_err(|e| e.to_string())?;
     let db = dbs
         .get(&db_name)
@@ -61,49 +61,105 @@ pub fn nql_execute(
         do_count(&q, &all_nodes, &all_edges)?
     } else {
         QResult {
-            nodes: all_nodes.iter().map(|n| QNode { id: n.id, label: n.label.clone() }).collect(),
-            edges: all_edges.iter().map(|e| QEdge { id: e.id, label: e.label.clone(), from: e.from, to: e.to }).collect(),
+            nodes: all_nodes
+                .iter()
+                .map(|n| QNode {
+                    id: n.id,
+                    label: n.label.clone(),
+                })
+                .collect(),
+            edges: all_edges
+                .iter()
+                .map(|e| QEdge {
+                    id: e.id,
+                    label: e.label.clone(),
+                    from: e.from,
+                    to: e.to,
+                })
+                .collect(),
             count: all_nodes.len(),
         }
     };
 
-    Ok(NqlResult {
+    Ok(SensibleqlResult {
         success: true,
-        message: format!("Query returned {} nodes and {} edges", result.nodes.len(), result.edges.len()),
+        message: format!(
+            "Query returned {} nodes and {} edges",
+            result.nodes.len(),
+            result.edges.len()
+        ),
         data: Some(serde_json::to_value(&result).map_err(|e| e.to_string())?),
     })
 }
 
 fn do_match(q: &str, nodes: &[Node], edges: &[Edge]) -> Result<QResult, String> {
     let label = pick_label(q);
-    let matched: Vec<QNode> = nodes.iter()
-        .filter(|n| label.as_ref().map_or(true, |l| n.label.to_lowercase().contains(l)))
-        .map(|n| QNode { id: n.id, label: n.label.clone() })
+    let matched: Vec<QNode> = nodes
+        .iter()
+        .filter(|n| {
+            label
+                .as_ref()
+                .map_or(true, |l| n.label.to_lowercase().contains(l))
+        })
+        .map(|n| QNode {
+            id: n.id,
+            label: n.label.clone(),
+        })
         .collect();
     let matched_edges: Vec<QEdge> = if q.contains(")-[") || q.contains("]->") {
         let el = pick_edge_label(q);
-        edges.iter()
+        edges
+            .iter()
             .filter(|e| {
                 let nm = matched.iter().any(|n| n.id == e.from || n.id == e.to);
-                el.as_ref().map_or(nm, |x| e.label.to_lowercase().contains(x) && nm)
+                el.as_ref()
+                    .map_or(nm, |x| e.label.to_lowercase().contains(x) && nm)
             })
-            .map(|e| QEdge { id: e.id, label: e.label.clone(), from: e.from, to: e.to })
+            .map(|e| QEdge {
+                id: e.id,
+                label: e.label.clone(),
+                from: e.from,
+                to: e.to,
+            })
             .collect()
-    } else { vec![] };
-    Ok(QResult { nodes: matched.clone(), edges: matched_edges, count: matched.len() })
+    } else {
+        vec![]
+    };
+    Ok(QResult {
+        nodes: matched.clone(),
+        edges: matched_edges,
+        count: matched.len(),
+    })
 }
 
 fn do_get(q: &str, nodes: &[Node], edges: &[Edge]) -> Result<QResult, String> {
     let term = pick_search(q);
-    let matched: Vec<QNode> = nodes.iter()
-        .filter(|n| term.as_ref().map_or(true, |s| n.label.to_lowercase().contains(s)))
-        .map(|n| QNode { id: n.id, label: n.label.clone() })
+    let matched: Vec<QNode> = nodes
+        .iter()
+        .filter(|n| {
+            term.as_ref()
+                .map_or(true, |s| n.label.to_lowercase().contains(s))
+        })
+        .map(|n| QNode {
+            id: n.id,
+            label: n.label.clone(),
+        })
         .collect();
-    let matched_edges: Vec<QEdge> = edges.iter()
+    let matched_edges: Vec<QEdge> = edges
+        .iter()
         .filter(|e| matched.iter().any(|n| n.id == e.from || n.id == e.to))
-        .map(|e| QEdge { id: e.id, label: e.label.clone(), from: e.from, to: e.to })
+        .map(|e| QEdge {
+            id: e.id,
+            label: e.label.clone(),
+            from: e.from,
+            to: e.to,
+        })
         .collect();
-    Ok(QResult { nodes: matched.clone(), edges: matched_edges, count: matched.len() })
+    Ok(QResult {
+        nodes: matched.clone(),
+        edges: matched_edges,
+        count: matched.len(),
+    })
 }
 
 fn do_count(q: &str, nodes: &[Node], edges: &[Edge]) -> Result<QResult, String> {
@@ -111,9 +167,20 @@ fn do_count(q: &str, nodes: &[Node], edges: &[Edge]) -> Result<QResult, String> 
     let count = if q.contains("edge") || q.contains("relationship") {
         edges.len()
     } else {
-        nodes.iter().filter(|n| label.as_ref().map_or(true, |l| n.label.to_lowercase().contains(l))).count()
+        nodes
+            .iter()
+            .filter(|n| {
+                label
+                    .as_ref()
+                    .map_or(true, |l| n.label.to_lowercase().contains(l))
+            })
+            .count()
     };
-    Ok(QResult { nodes: vec![], edges: vec![], count })
+    Ok(QResult {
+        nodes: vec![],
+        edges: vec![],
+        count,
+    })
 }
 
 fn pick_label(q: &str) -> Option<String> {
@@ -127,7 +194,9 @@ fn pick_label(q: &str) -> Option<String> {
             // Node pattern: single letter variable like (n:Label)
             if between.len() <= 2 && between.chars().all(|c| c.is_alphabetic()) {
                 let after = &q[i + 1..];
-                let end = after.find(|c: char| !c.is_alphanumeric() && c != '_').unwrap_or(after.len());
+                let end = after
+                    .find(|c: char| !c.is_alphanumeric() && c != '_')
+                    .unwrap_or(after.len());
                 if end > 0 {
                     return Some(after[..end].to_string());
                 }
@@ -143,7 +212,11 @@ fn pick_edge_label(q: &str) -> Option<String> {
     let colon = rest.find(':')?;
     let after = &rest[colon + 1..];
     let end = after.find(']')?;
-    if end > 0 { Some(after[..end].to_string()) } else { None }
+    if end > 0 {
+        Some(after[..end].to_string())
+    } else {
+        None
+    }
 }
 
 fn pick_search(q: &str) -> Option<String> {

@@ -7,7 +7,7 @@ The parser module transforms SensibleQL source code into an Abstract Syntax Tree
 
 ### Core Components
 - **`mod.rs`** - Main parser entry point, orchestrates parsing of schemas, queries, and migrations
-- **`grammar.pest`** - Pest grammar defining NQL syntax rules
+- **`grammar.pest`** - Pest grammar defining SensibleQL syntax rules
 - **`types.rs`** - AST node definitions and data structures
 - **`location.rs`** - Location tracking for error reporting
 
@@ -24,7 +24,7 @@ The parser module transforms SensibleQL source code into an Abstract Syntax Tree
 
 ## Parsing Flow
 
-1. **Input**: NQL files containing schemas, queries, and migrations
+1. **Input**: SensibleQL files containing schemas, queries, and migrations
 2. **Lexing**: Pest tokenizes input according to `grammar.pest` rules
 3. **AST Construction**: 
    - Schemas parsed first (establishing type definitions)

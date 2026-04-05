@@ -3421,7 +3421,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "nql-tests"
+name = "sensibleql-tests"
 version = "0.1.0"
 dependencies = [
  "anyhow",

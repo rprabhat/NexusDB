@@ -42,8 +42,8 @@
 }
 
 .chat-message.user .message-content {
-  background: #6366f1;
-  border-color: #6366f1;
+  background: var(--accent)6366f1;
+  border-color: var(--accent)6366f1;
 }
 
 .message-text {
@@ -164,13 +164,13 @@
   margin-top: var(--space-xs);
 }
 
-.nql-explain-section {
+.sensibleql-explain-section {
   margin-top: var(--space-sm);
   border-top: 1px solid var(--border);
   padding-top: var(--space-sm);
 }
 
-.nql-toggle-btn {
+.sensibleql-toggle-btn {
   background: none;
   border: none;
   color: var(--text-muted);
@@ -183,11 +183,11 @@
   transition: color var(--transition-fast);
 }
 
-.nql-toggle-btn:hover {
+.sensibleql-toggle-btn:hover {
   color: var(--text-secondary);
 }
 
-.nql-code {
+.sensibleql-code {
   margin-top: var(--space-xs);
   background: var(--bg-primary);
   border: 1px solid var(--border);
@@ -196,7 +196,7 @@
   overflow-x: auto;
 }
 
-.nql-code code {
+.sensibleql-code code {
   font-family: 'JetBrains Mono', 'SF Mono', monospace;
   font-size: 11px;
   color: var(--accent);
@@ -225,7 +225,7 @@
 .follow-up-chip:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
-  border-color: #6366f1;
+  border-color: var(--accent)6366f1;
 }
 
 .message-actions {
@@ -304,7 +304,7 @@
 .suggestion-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
-  border-color: #6366f1;
+  border-color: var(--accent)6366f1;
 }
 
 .chat-input-row {

@@ -1,8 +1,8 @@
-// NexusQL Schema Definition
+// SensibleQL Schema Definition
 // Based on the provided Rust structs
 
 // Node: UserRecord
-// Note: 'id' field is implicit in NexusQL and not declared in schema
+// Note: 'id' field is implicit in SensibleQL and not declared in schema
 N::User {
     country: U8
 }
@@ -20,7 +20,7 @@ E::Interacted {
     To: Item
 }
 
-// NexusQL Query Definitions
+// SensibleQL Query Definitions
 // Insertion queries for the three types
 
 // Query 1: Insert a User node

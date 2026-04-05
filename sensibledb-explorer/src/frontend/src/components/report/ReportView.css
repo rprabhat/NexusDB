@@ -41,7 +41,7 @@
   display: block;
   font-size: 28px;
   font-weight: 700;
-  color: #6366f1;
+  color: var(--accent)6366f1;
 }
 
 .metric-label {
@@ -145,7 +145,7 @@
 
 .type-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6366f1, #06b6d4);
+  background: linear-gradient(90deg, var(--accent)6366f1, var(--accent)06b6d4);
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -160,7 +160,7 @@
 .time-notice {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--accent)f59e0b;
   border-radius: var(--radius-md);
   padding: var(--space-sm) var(--space-md);
   margin-bottom: var(--space-lg);
@@ -217,21 +217,21 @@
 }
 
 .export-btn.primary {
-  background: #6366f1;
-  border-color: #6366f1;
+  background: var(--accent)6366f1;
+  border-color: var(--accent)6366f1;
   color: white;
 }
 
 .export-btn.primary:hover {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background: var(--accent)4f46e5;
+  border-color: var(--accent)4f46e5;
 }
 
 .toast-notification {
   position: fixed;
   bottom: var(--space-xl);
   right: var(--space-xl);
-  background: #10b981;
+  background: var(--accent)10b981;
   color: white;
   padding: var(--space-sm) var(--space-lg);
   border-radius: var(--radius-md);
@@ -280,7 +280,7 @@
   }
 
   .metric-card {
-    border: 1px solid #ddd;
+    border: 1px solid var(--accent)ddd;
     break-inside: avoid;
   }
 

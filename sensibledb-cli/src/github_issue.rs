@@ -53,8 +53,8 @@ impl GitHubIssueBuilder {
     /// Build the GitHub issue URL with query parameters.
     pub fn build_url(&self) -> String {
         let title = match &self.first_error {
-            Some(error) => format!("bug (nql): rust generation failure - {}", error),
-            None => "bug (nql): rust generation failure".to_string(),
+            Some(error) => format!("bug (sensibleql): rust generation failure - {}", error),
+            None => "bug (sensibleql): rust generation failure".to_string(),
         };
 
         // URL encode the fixed parameters

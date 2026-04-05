@@ -37,8 +37,8 @@ export const glossary: Record<string, GlossaryTerm> = {
     explanation: "Starting from one item, see what it connects to.",
     example: 'From "Fatigue", follow connections to find "Poor Sleep" and "Stressful Meeting".',
   },
-  nql: {
-    technicalTerm: "NQL Query",
+  sensibleql: {
+    technicalTerm: "SensibleQL Query",
     userFacingTerm: "Ask a question",
     explanation: "A way to ask your data questions.",
     example: 'Ask "What triggers fatigue?" and get answers from your data.',

@@ -12,7 +12,7 @@ SensibleQL is a **strongly typed, compiled query language** for SensibleDB.
 
 ## Query Structure
 
-```nql
+```sensibleql
 QUERY QueryName(param1: Type, param2: Type) =>
     result <- traversal_expression
     RETURN result
@@ -20,7 +20,7 @@ QUERY QueryName(param1: Type, param2: Type) =>
 
 ## Example
 
-```nql
+```sensibleql
 N::User {
     INDEX name: String,
     age: U32

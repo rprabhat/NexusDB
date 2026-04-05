@@ -23,7 +23,7 @@ const dataNavItems: NavItem[] = [
   { id: "nodes", icon: "📦", label: "Items", tooltip: "Browse all items in your database", shortcut: "5" },
   { id: "edges", icon: "🔀", label: "Connections", tooltip: "View relationships between items", shortcut: "6" },
   { id: "schema", icon: "🏗️", label: "Structure", tooltip: "See how your data is organized", shortcut: "7" },
-  { id: "nql", icon: "⌨️", label: "NQL Editor", tooltip: "Write advanced queries", shortcut: "8" },
+  { id: "sensibleql", icon: "⌨️", label: "SensibleQL Editor", tooltip: "Write advanced queries", shortcut: "8" },
 ];
 
 const Sidebar: Component = () => {

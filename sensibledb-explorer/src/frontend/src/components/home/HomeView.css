@@ -13,7 +13,7 @@
   font-size: 28px;
   font-weight: 700;
   margin-bottom: var(--space-sm);
-  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  background: linear-gradient(135deg, var(--accent)6366f1, var(--accent)06b6d4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -82,7 +82,7 @@
   display: block;
   font-size: 24px;
   font-weight: 700;
-  color: #6366f1;
+  color: var(--accent)6366f1;
 }
 
 .stat-label {
@@ -121,7 +121,7 @@
 }
 
 .demo-card:hover {
-  border-color: #6366f1;
+  border-color: var(--accent)6366f1;
 }
 
 .demo-header {
@@ -160,7 +160,7 @@
 .demo-btn {
   width: 100%;
   padding: var(--space-sm) var(--space-lg);
-  background: #6366f1;
+  background: var(--accent)6366f1;
   border: none;
   border-radius: var(--radius-md);
   color: white;
@@ -172,7 +172,7 @@
 }
 
 .demo-btn:hover {
-  background: #4f46e5;
+  background: var(--accent)4f46e5;
 }
 
 .demo-questions {
@@ -203,7 +203,7 @@
 .demo-question:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
-  border-color: #6366f1;
+  border-color: var(--accent)6366f1;
 }
 
 .tips-grid {

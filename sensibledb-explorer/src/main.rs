@@ -42,7 +42,7 @@ fn main() {
             commands::edge_delete,
             commands::edge_list,
             commands::schema_get,
-            commands::nql_execute,
+            commands::sensibleql_execute,
         ])
         .run(tauri::generate_context!())
         .expect("error while running SensibleDB Explorer");

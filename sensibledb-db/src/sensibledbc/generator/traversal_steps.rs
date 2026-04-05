@@ -140,7 +140,7 @@ pub struct Traversal {
     pub excluded_fields: Vec<String>,
     pub nested_traversals: std::collections::HashMap<String, NestedTraversalInfo>,
     pub is_reused_variable: bool,
-    pub closure_param_name: Option<String>, // NQL closure parameter name (e.g., "e" from entries::|e|)
+    pub closure_param_name: Option<String>, // SensibleQL closure parameter name (e.g., "e" from entries::|e|)
     /// Maps output field name -> source property name for renamed fields
     /// e.g., "post" -> "content" for `post: content`, "file_id" -> "ID"
     pub field_name_mappings: std::collections::HashMap<String, String>,

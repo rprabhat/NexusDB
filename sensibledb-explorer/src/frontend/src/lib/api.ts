@@ -1,6 +1,6 @@
 export const logError = (msg: string) => invoke("log_error", { msg });
 import { invoke } from "@tauri-apps/api/core";
-import type { NodeDto, EdgeDto, SchemaInfo, NqlResult } from "../types";
+import type { NodeDto, EdgeDto, SchemaInfo, SensibleqlResult } from "../types";
 
 // Database commands
 export const dbCreate = (name: string, path: string) => invoke<string>("db_create", { name, path });
@@ -37,6 +37,6 @@ export const edgeList = (db_name: string) =>
 export const schemaGet = (db_name: string) =>
   invoke<SchemaInfo>("schema_get", { dbName: db_name });
 
-// NQL commands
-export const nqlExecute = (db_name: string, query: string) =>
-  invoke<NqlResult>("nql_execute", { dbName: db_name, query });
+// SensibleQL commands
+export const sensibleqlExecute = (db_name: string, query: string) =>
+  invoke<SensibleqlResult>("sensibleql_execute", { dbName: db_name, query });

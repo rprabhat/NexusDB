@@ -1,10 +1,10 @@
 import { Component, createSignal, onMount, Show, For } from "solid-js";
 import { EditorView, basicSetup } from "codemirror";
 import { EditorState } from "@codemirror/state";
-import { nqlExecute } from "../../lib/api";
+import { sensibleqlExecute } from "../../lib/api";
 import { activeDb } from "../../stores/app";
-import type { NqlResult } from "../../types";
-import "./NqlEditor.css";
+import type { SensibleqlResult } from "../../types";
+import "./SensibleQLEditor.css";
 
 interface SampleQuery {
   label: string;
@@ -26,10 +26,10 @@ const sampleQueries: SampleQuery[] = [
   { label: "Tools Used", tooltip: "Find all tools", query: "MATCH (n:Tool) RETURN n" },
 ];
 
-const NqlEditor: Component = () => {
+const SensibleQLEditor: Component = () => {
   let editorRef: HTMLDivElement | undefined;
   const [query, setQuery] = createSignal("");
-  const [result, setResult] = createSignal<NqlResult | null>(null);
+  const [result, setResult] = createSignal<SensibleqlResult | null>(null);
   const [isRunning, setIsRunning] = createSignal(false);
   let editor: EditorView | undefined;
 
@@ -42,8 +42,8 @@ const NqlEditor: Component = () => {
           basicSetup,
           EditorView.theme({
             "&": { fontSize: "14px" },
-            ".cm-editor": { background: "#1e293b" },
-            ".cm-gutters": { background: "#0f172a", border: "none" },
+            ".cm-editor": { background: "#f8fafc" },
+            ".cm-gutters": { background: "#f1f5f9", border: "none" },
           }),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
@@ -60,7 +60,7 @@ const NqlEditor: Component = () => {
     if (!activeDb() || !query()) return;
     setIsRunning(true);
     try {
-      const res = await nqlExecute(activeDb()!, query());
+      const res = await sensibleqlExecute(activeDb()!, query());
       setResult(res);
     } catch (e: any) {
       setResult({ success: false, message: String(e), data: null });
@@ -80,9 +80,9 @@ const NqlEditor: Component = () => {
   };
 
   return (
-    <div class="nql-editor">
+    <div class="sensibleql-editor">
       <div class="editor-header">
-        <h2>NQL Query Editor</h2>
+        <h2>SensibleQL Query Editor</h2>
         <button onClick={handleRun} disabled={isRunning()}>
           {isRunning() ? "Running..." : "▶ Run Query"}
         </button>
@@ -122,4 +122,4 @@ const NqlEditor: Component = () => {
   );
 };
 
-export default NqlEditor;
+export default SensibleQLEditor;
