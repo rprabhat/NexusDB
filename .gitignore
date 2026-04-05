@@ -8,7 +8,6 @@ hack/
 .DS_Store
 /tmp
 /data
-claude.md
 .cargo/
 **/dist
 **/node_modules
