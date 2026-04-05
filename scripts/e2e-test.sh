@@ -66,7 +66,7 @@ main() {
     assert_eq "$node_count" "24" "Demo database has 24 nodes (11 health + 13 project management)"
 
     edge_count=$(grep -c "db.put_edge(Edge" nexus-explorer/src/commands/database.rs 2>/dev/null || echo "0")
-    assert_eq "$edge_count" "35" "Demo database has 35 edges (16 health + 14 project management + 5 shared)"
+    assert_eq "$edge_count" "30" "Demo database has 30 edges (16 health + 14 project management)"
 
     local labels
     labels=$(grep "label:" nexus-explorer/src/commands/database.rs)
