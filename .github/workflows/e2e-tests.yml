@@ -21,16 +21,6 @@ on:
       - 'scripts/e2e-test.sh'
       - 'Cargo.toml'
       - 'Cargo.lock'
-  push:
-    branches: [ main ]
-    paths:
-      - 'nexus-explorer/**'
-      - 'nexus-db/**'
-      - 'e2e/**'
-      - 'playwright.config.ts'
-      - 'scripts/e2e-test.sh'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
 
 jobs:
   e2e-tests:

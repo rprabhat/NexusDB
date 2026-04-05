@@ -19,7 +19,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'cd nexus-explorer/src/frontend && npx vite --port 1420',
+    command: 'cd nexus-explorer/src/frontend && pnpm vite --port 1420',
     url: 'http://localhost:1420',
     reuseExistingServer: true,
     timeout: 60000,
