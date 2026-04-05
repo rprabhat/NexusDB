@@ -22,9 +22,7 @@ test.describe('Error Handling', () => {
     const bodyText = await page.evaluate(() => document.body.innerText);
     expect(bodyText.length).toBeGreaterThan(100);
     await page.keyboard.press('2');
-    await page.waitForTimeout(500);
-    const graphVisible = await page.locator('.graph-container').isVisible();
-    expect(graphVisible).toBe(true);
+    await expect(page.locator('.graph-container')).toBeVisible({ timeout: 5000 });
   });
 
   test('app handles database switch without crashing', async ({ page }) => {
