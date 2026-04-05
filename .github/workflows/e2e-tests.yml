@@ -43,3 +43,26 @@ jobs:
         run: |
           chmod +x scripts/e2e-test.sh
           bash scripts/e2e-test.sh
+
+  playwright-e2e:
+    name: Playwright E2E Tests
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install frontend dependencies
+        working-directory: nexus-explorer/src/frontend
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E tests
+        run: npx playwright test --reporter=list
+        env:
+          CI: true
