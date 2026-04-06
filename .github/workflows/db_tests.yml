@@ -46,9 +46,9 @@ jobs:
     - name: Run lincheck tests (if available)
       run: |
         cd sensibledb-db
-        cargo test --lib lincheck --release 2>/dev/null || true
+        cargo test --lib lincheck --release || true
     
     - name: Run benchmarks (if bench feature enabled)
       run: |
         cd sensibledb-db
-        cargo bench --features bench 2>/dev/null || true
+        cargo bench --features bench || true
