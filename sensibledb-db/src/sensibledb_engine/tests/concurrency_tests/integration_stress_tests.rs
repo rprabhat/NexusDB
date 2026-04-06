@@ -513,7 +513,4 @@ fn test_stress_memory_stability() {
     // Drop storage first (closes LMDB), then temp_dir is dropped (deletes files).
     drop(storage);
     drop(temp_dir);
-
-    // Prevent any further cleanup that might cause issues
-    std::mem::forget(storage);
 }
