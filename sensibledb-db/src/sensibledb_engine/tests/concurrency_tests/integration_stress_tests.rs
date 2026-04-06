@@ -447,6 +447,7 @@ fn test_stress_memory_stability() {
     //
     // EXPECTED: System remains stable, no unbounded growth
 
+    // Setup storage and temp dir
     let (storage, temp_dir) = setup_stress_storage();
 
     let duration = Duration::from_secs(3);
@@ -507,11 +508,12 @@ fn test_stress_memory_stability() {
     // If we reach here without panic/OOM, memory is stable
     println!("Memory stability test completed successfully");
 
-    // CRITICAL: Explicit drop ordering to prevent double-free corruption.
-    // LMDB's Env::drop expects underlying files to exist during cleanup.
-    // TempDir would delete files when dropped, causing corruption.
-    // We explicitly drop storage (which closes LMDB Env cleanly) first,
-    // then forget temp_dir to prevent double-cleanup.
+    // CRITICAL: Deterministic cleanup to prevent double-free.
+    // LMDB requires files exist during Env::drop cleanup.
+    // Drop storage first (closes LMDB), then temp_dir is dropped (deletes files).
     drop(storage);
-    std::mem::forget(temp_dir);
+    drop(temp_dir);
+
+    // Prevent any further cleanup that might cause issues
+    std::mem::forget(storage);
 }
