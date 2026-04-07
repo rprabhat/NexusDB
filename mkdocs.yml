@@ -45,11 +45,13 @@ markdown_extensions:
 nav:
   - Home: .
   - For Non-Technical Users:
-    - Explorer Quick Start: getting-started/intro.md
+    - Explorer Quick Start: getting-started/explorer-guide.md
   - For Developers:
     - Getting Started:
       - Overview: getting-started/intro.md
       - Installation: getting-started/installation.md
+      - Quick Start: getting-started/developer-guide.md
+      - AI Agent Integration: getting-started/agent-guide.md
     - SensibleQL:
       - Overview: sensibleql/overview.md
       - Schema Definition: sensibleql/schema-definition.md

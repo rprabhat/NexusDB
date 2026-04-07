@@ -22,44 +22,104 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
           cache-dependency-path: sensibledb-explorer/src/frontend/pnpm-lock.yaml
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin
+
       - name: Install frontend dependencies
         run: |
           cd sensibledb-explorer/src/frontend
           pnpm install
+
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2"
+
       - name: Build .app and .dmg
         run: |
           cd sensibledb-explorer
           cargo tauri build --bundles app,dmg --target aarch64-apple-darwin
-      - name: Re-sign app bundle
+
+      - name: Import Apple Certificate (if secrets available)
+        if: env.APPLE_CERTIFICATE != ''
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          # Create temporary keychain
+          security create-keychain -p "" build.keychain
+          security set-keychain-settings build.keychain
+
+          # Decode and import certificate
+          echo "$APPLE_CERTIFICATE" | base64 --decode > certificate.p12
+          security import certificate.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12
+
+          # Fix keychain partition list
+          security set-key-partition-list -S apple-tool:,apple: -k "" build.keychain
+
+      - name: Sign and Notarize App (if secrets available)
+        if: env.APPLE_ID != ''
+        env:
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          APP_DIR="target/aarch64-apple-darwin/release/bundle/macos/SensibleDB Explorer.app"
+          
+          # Sign with hardened runtime and entitlements
+          codesign --deep --force --verify \
+            --sign "$APPLE_SIGNING_IDENTITY" \
+            --options runtime \
+            --entitlements sensibledb-explorer/entitlements.plist \
+            "$APP_DIR"
+          
+          # Create DMG
+          hdiutil create -volname "SensibleDB Explorer" \
+            -srcfolder "$APP_DIR" \
+            -ov -format UDZO \
+            "target/aarch64-apple-darwin/release/bundle/dmg/SensibleDB-Explorer.dmg"
+          
+          # Notarize (requires Apple Developer account)
+          xcrun notarytool submit "target/aarch64-apple-darwin/release/bundle/dmg/SensibleDB-Explorer.dmg" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
+          
+          # Staple the notarization ticket
+          xcrun stapler staple "target/aarch64-apple-darwin/release/bundle/dmg/SensibleDB-Explorer.dmg"
+
+      - name: Re-sign app bundle (fallback without signing)
+        if: env.APPLE_SIGNING_IDENTITY == ''
         run: |
           APP_DIR="target/aarch64-apple-darwin/release/bundle/macos/SensibleDB Explorer.app"
           codesign --force --deep --sign - --preserve-metadata=entitlements,identifier,flags "$APP_DIR"
+
       - name: Zip .app bundle
         run: |
           APP_DIR="target/aarch64-apple-darwin/release/bundle/macos/SensibleDB Explorer.app"
           zip -r -y "target/aarch64-apple-darwin/release/bundle/macos/SensibleDB-Explorer-aarch64.app.zip" "$APP_DIR"
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             target/aarch64-apple-darwin/release/bundle/macos/SensibleDB-Explorer-aarch64.app.zip
-            target/aarch64-apple-darwin/release/bundle/dmg/SensibleDB Explorer_*.dmg
+            target/aarch64-apple-darwin/release/bundle/dmg/SensibleDB-Explorer.dmg
           draft: false
           prerelease: false
           generate_release_notes: true
