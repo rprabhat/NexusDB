@@ -53,7 +53,7 @@ If you're looking for a personal app to help you organize and search through you
 
 ### Quick Start (Explorer UI)
 
-1. Download SensibleDB Explorer for macOS
+1. [Download SensibleDB Explorer for macOS](https://github.com/Sensible-Analytics/SensibleDB/releases)
 2. Launch the app
 3. Click "Add Folder" and select your documents folder
 4. Start chatting with your documents

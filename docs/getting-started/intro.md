@@ -12,7 +12,7 @@ SensibleDB makes it easy to build all components needed for an AI application in
 
 Download the desktop app to turn your documents into a searchable knowledge base:
 
-1. Download for macOS
+1. [Download SensibleDB Explorer for macOS](https://github.com/Sensible-Analytics/SensibleDB/releases)
 2. Launch and add your documents folder
 3. Chat with your documents in plain English
 

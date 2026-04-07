@@ -31,7 +31,7 @@ Built in Rust with LMDB as its storage engine — like SQLite for knowledge grap
 
 ### Get Started
 
-1. Download SensibleDB Explorer for macOS
+1. [Download SensibleDB Explorer for macOS](https://github.com/Sensible-Analytics/SensibleDB/releases)
 2. Launch the app
 3. Click "Add Folder" → select your documents folder
 4. Start chatting!
